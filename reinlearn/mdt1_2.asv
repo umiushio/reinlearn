@@ -1,0 +1,43 @@
+function mdt1_2(N)
+% 基于贪婪算法
+    V = zeros(N * N, 1);
+    R = -1 * ones(N*N, N);
+    R(1, :) = 0; R(end, :) = 0;
+    
+    fnorm = 0;
+    err = 1;
+    esp = 1e-1;
+    step = 0;
+    function ns = fnp(s, a)
+        ns = s;
+        if(a == 1)
+            if(s > N) ns  = ns - N; end
+        elseif (a == 2)
+            if(mod(s, N) ~= 1) ns = ns - 1; end
+        elseif (a == 3)
+            if(mod(s, N) ~= 0) ns = ns + 1; end
+        elseif (a == 4)
+            if(s + N <= N^2) ns = ns + N; end
+        end
+    end
+    function Pn = evapro(s, a)
+        Pn = zeros(1, N);
+        Pn(fnp(s, a)) = 1;
+    end 
+    function [ns, ba] = greedy(s, V)
+        for a = 1:4
+            Vs(a) = R(s, ) + evapro(s, a) * V;
+        end
+        [ns, ba] = max(Vs);
+    end
+    while err >= esp
+        V = greedy(, V);
+        Vn = reshape(V, N, N);
+        disp(Vn);
+        err = abs(norm(Vn) - fnorm);
+        fnorm = norm(Vn);
+        step = step + 1;
+        disp(step);
+        if step >= 10 break; end
+    end
+end

@@ -1,4 +1,5 @@
 function mdt1_1(N)
+% 基于随机策略
     V = zeros(N * N, 1);
     R = -1 * ones(N * N, 1);
     R(1, 1) = 0; R(end, 1) = 0;
