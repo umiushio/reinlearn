@@ -1,0 +1,37 @@
+function mdt1_1(N)
+    V = zeros(N * N, 1);
+    R = -1 * ones(N * N, 1);
+    R(1, 1) = 0; R(end, 1) = 0;
+    P = zeros(N*N);
+    fnorm = 0;
+    err = 1;
+    esp = 1e-1;
+    step = 0;
+    function ni = fcd(i, dir)
+        ni = i;
+        if(dir == 1)
+            if(i > N) ni  = ni - N; end
+        elseif (dir == 2)
+            if(mod(i, N) ~= 1) ni = ni - 1; end
+        elseif (dir == 3)
+            if(mod(i, N) ~= 0) ni = ni + 1; end
+        elseif (dir == 4)
+            if(i + N <= N^2) ni = ni + N; end
+        end
+    end
+    for i = 2:N*N-1
+        for j = 1:4
+            P(i, fcd(i, j)) = 0.25;
+        end
+    end
+    while err >= esp
+        V = R + P * V;
+        Vn = reshape(V, N, N);
+        disp(Vn);
+        err = abs(norm(Vn) - fnorm);
+        fnorm = norm(Vn);
+        step = step + 1;
+        disp(step);
+        if step >= 10 break; end
+    end
+end
