@@ -1,0 +1,54 @@
+function bandit_8(qem, n, var, steps)
+%% 本程序模拟多臂赌博机的工作情形，并研究在sample average方法下用不同策略下(esp-greedy)最优策略采用率的规律
+
+% qem: 赌博机每臂报酬期望的最大可能值
+% n: 赌博机臂数
+% var: 赌博机每臂报酬变量的方差
+% steps: 赌博机执行的最多次数
+% qe: 赌博机每臂报酬期望的随机变量, 服从[-qem, qem]的随机分布
+% exr: 在esp-greedy策略下获得的‘行动轮数-报酬’向量
+
+    qe = unifrnd(-qem, qem, n, 1);
+    esp = [0, 0.01, 0.1];   % esp-greedy策略中的esp可能值
+    rmean = zeros(steps+1, 1);
+    for s = 1:500       % 每种策略做500次实验，得到普遍规律
+        rmean = rmean + process(qe, n, var, steps);
+    end
+    rmean = rmean/500;
+    disp(qe);
+    subplot(2, 1, 1);
+    plot(rmean(2,), 'r'); gtext("greedy");
+    xlabel("steps"); ylabel("per opt"); title("bandit based on 'ucb'");
+    
+    subplot(2, 1, 1);
+    
+end
+
+function opta = ucb(qa, cnta, t, c)
+%  根据已有信息采用greedy算法求最优行动；若有多个，则随机取其中一个
+    [vmin, imin] = min(cnta);
+    if vmin == 0
+        opta = imin;
+    else
+        ucbq = qa + c*sqrt(log(t)./cnta);
+        [sqa, i] = sort(ucbq);
+        [~, maxi] = max(sqa);
+        opta = i(maxi + randi(length(qa) - maxi + 1) - 1);
+    end
+end
+
+function [rmean, at, peropt] = process(qe, n, var, steps)
+% 模拟一次game全过程，输出报酬变化向量和行动向量
+    qaction = zeros(n, 1);
+    rmean = zeros(n, 1);
+    cnta = zeros(n, 1);
+    for t = 1:steps
+        at(t) = ucb(qaction, cnta, t, 2);
+        rv(t) = sqrt(var)*randn + qe(at(t));
+        cnta(at(t)) = cnta(at(t)) + 1;
+        qaction(at(t)) =  qaction(at(t)) + (rv(t) - qaction(at(t), 1)) / cnta(at(t));
+        rmean(t + 1) = rmean(t) + (rv(t) - rmean(t)) /t;
+    end
+    [~, imax] = max(qe);
+    peropt = cnta(imax) / steps;
+end

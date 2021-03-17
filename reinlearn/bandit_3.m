@@ -1,5 +1,5 @@
 function bandit_3(qem, n, var, maxsteps)
-%% 本程序模拟多臂赌博机的工作情形，并研究不同策略下(esp-greedy)采用最优策略概率的规律
+%% 本程序模拟多臂赌博机的工作情形，并研究在sample average方法下用不同策略下(esp-greedy)最优策略采用率的规律
 
 % qem: 赌博机每臂报酬期望的最大可能值
 % n: 赌博机臂数
